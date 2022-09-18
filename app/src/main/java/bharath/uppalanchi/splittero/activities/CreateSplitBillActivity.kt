@@ -6,7 +6,6 @@ import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.Window
 import androidx.appcompat.app.AlertDialog
@@ -24,8 +23,7 @@ import utils.Constants
 import utils.SwipeToDeleteCallback
 
 
-class CreateSplitBillActivity : AppCompatActivity(), View.OnClickListener, OnDialogCloseListener,
-    SplitBillAdapterInterface {
+class CreateSplitBillActivity : AppCompatActivity(), View.OnClickListener, OnDialogCloseListener, SplitBillAdapterInterface {
     private lateinit var binding: ActivityCreateSplitBillBinding
     private var splitBillBucketList = ArrayList<SplitBillBucket>()
 
@@ -84,7 +82,7 @@ class CreateSplitBillActivity : AppCompatActivity(), View.OnClickListener, OnDia
 
     private fun setupRecyclerViewForSplitBillBuckets(splitBillBucketList : ArrayList<SplitBillBucket>){
         binding.splitBillRecyclerView.layoutManager = LinearLayoutManager(this)
-        val adapter = SplitBillAdapter(applicationContext,splitBillBucketList,Constants.CREATE_SPLIT_BILL,this@CreateSplitBillActivity)
+        val adapter = SplitBillAdapter(this@CreateSplitBillActivity,splitBillBucketList,Constants.CREATE_SPLIT_BILL,this@CreateSplitBillActivity)
         binding.splitBillRecyclerView.adapter = adapter
 
         swipeToDeleteSplitBill(splitBillBucketList)

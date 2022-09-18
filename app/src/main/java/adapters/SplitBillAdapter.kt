@@ -2,6 +2,8 @@ package adapters
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +14,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import bharath.uppalanchi.splittero.R
+import bharath.uppalanchi.splittero.activities.AddBillsActivity
 import database.DBHandler
 import modals.SplitBillBucket
 import utils.Constants
@@ -37,7 +40,11 @@ class SplitBillAdapter(private val context : Context, private var list : ArrayLi
         holder.splitBillCreatedDate.text = currentObject.splitBillCreatedDate
 
         if(activityName == Constants.CREATE_SPLIT_BILL){
-
+             holder.splitBillBucketCard.setOnClickListener{
+                 val intent = Intent(context, AddBillsActivity::class.java)
+                 intent.putExtra(Constants.SPLIT_BILL_BUCKET_DETAILS,  currentObject)
+                 context.startActivity(intent)
+             }
         }
 
         if (activityName == Constants.TRASH_SPLIT_BILL) {

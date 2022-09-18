@@ -11,6 +11,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Splittero">
         <activity
+            android:name="dialogs.AddParticipant"
+            android:exported="false"
+            android:theme="@android:style/Theme.Dialog"
+            tools:ignore="Instantiatable" />
+        <activity
             android:name=".activities.AddBillsActivity"
             android:exported="false" />
         <activity
@@ -18,7 +23,7 @@
             android:exported="false" />
         <activity
             android:name="dialogs.AddSplitBillDialog"
-            android:exported="true"
+            android:exported="false"
             android:theme="@android:style/Theme.Dialog"
             tools:ignore="Instantiatable" />
         <activity

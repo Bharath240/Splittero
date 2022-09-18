@@ -5,6 +5,8 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.util.Log
+import modals.ParticipantDetails
 import modals.SplitBillBucket
 
 class DBHandler(context: Context, factory: SQLiteDatabase.CursorFactory?) :
@@ -12,7 +14,9 @@ SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
 
     companion object {
         private const val DATABASE_NAME = "SPLITTERO"
-        private const val DATABASE_VERSION = 1
+        private const val DATABASE_VERSION = 10
+
+        //--------------- SPLIT BILLS BUCKET TABLE -------------------
         const val TABLE_NAME = "tbl_bills_bucket"
         const val ID_COL = "split_bill_id"
         const val SPLIT_BILL_NAME_COL = "split_bill_name"
@@ -20,6 +24,12 @@ SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
         const val TEMPORARY_DELETE = "temp_del"
         const val PERMANENT_DELETE = "permanent_del"
         const val CREATED_DATE = "dt_created_date"
+
+        //--------------- PARTICIPANTS TABLE -------------------
+        const val PARTICIPANTS_TABLE = "tbl_split_bucket_participants"
+        const val PARTICIPANT_ID = "participant_id"
+        const val PARTICIPANT_NAME = "participant_name"
+        const val PARTICIPANT_DELETE = "bt_delete"
 
 
     }
@@ -32,13 +42,20 @@ SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
                 PERMANENT_DELETE + " INTEGER DEFAULT 0,"+
                 CREATED_DATE + " TEXT "+
                 ")")
+
+
         db?.execSQL(query)
+        onUpgrade(db, DATABASE_VERSION-1, DATABASE_VERSION)
+
 
     }
 
-    override fun onUpgrade(db: SQLiteDatabase?, p1: Int, p2: Int) {
-        db?.execSQL("DROP TABLE IF EXISTS $TABLE_NAME")
-        onCreate(db)
+    override fun onUpgrade(db: SQLiteDatabase?, olderVersion: Int, newerVersion: Int) {
+
+        if(olderVersion < newerVersion) {
+            createParticipantsTable(db)
+        }
+
     }
 
     fun insertSplitBill(splitBillName : String, imageIndex : Int,splitBillCreatedDate : String ) : Long{
@@ -52,6 +69,18 @@ SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
 
         // all values are inserted into database
        val success : Long = db.insert(TABLE_NAME, null, values)
+        db.close()
+        return  success
+    }
+
+    fun addParticipant(participantDetails: ParticipantDetails) : Long{
+
+        val values = ContentValues()
+
+        values.put(PARTICIPANT_NAME, participantDetails.participantName)
+        values.put(ID_COL, participantDetails.participantSplitBucketID)
+        val db = this.writableDatabase
+        val success : Long = db.insert(PARTICIPANTS_TABLE, null, values)
         db.close()
         return  success
     }
@@ -117,5 +146,19 @@ SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
         return db.rawQuery("SELECT *" + " FROM " + TABLE_NAME + " WHERE "+ PERMANENT_DELETE + "=0" , null)
     }
 
+    private fun createParticipantsTable(db : SQLiteDatabase?){
+        val checkForParticipantsTable : Cursor? = db?.rawQuery("select DISTINCT tbl_name from sqlite_master where tbl_name = '"
+                + PARTICIPANTS_TABLE + "'", null)
+        if(checkForParticipantsTable?.count == 0){
+            val query2 = ("CREATE TABLE " + PARTICIPANTS_TABLE + " ("
+                    + PARTICIPANT_ID + " INTEGER PRIMARY KEY, " +
+                    PARTICIPANT_NAME + " TEXT," +
+                    PARTICIPANT_DELETE + " INTEGER DEFAULT 0,"+
+                    ID_COL+ " INTEGER,"+
+                    " FOREIGN KEY ("+ ID_COL+") REFERENCES "+ TABLE_NAME+"("+ID_COL+")"+
 
+                    ")")
+            db?.execSQL(query2)
+        }
+    }
 }

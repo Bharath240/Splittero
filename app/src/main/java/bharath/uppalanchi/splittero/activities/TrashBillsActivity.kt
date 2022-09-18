@@ -6,10 +6,7 @@ import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import bharath.uppalanchi.splittero.R
 import bharath.uppalanchi.splittero.databinding.TrashBillsActivityBinding
 import database.DBHandler
 import modals.SplitBillBucket
