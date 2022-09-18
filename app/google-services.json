@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "348081971538",
+    "project_id": "splittero",
+    "storage_bucket": "splittero.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:348081971538:android:f96cfdb180a4d194c11a8b",
+        "android_client_info": {
+          "package_name": "bharath.uppalanchi.splittero"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "348081971538-j04pe9d9aa8voptcnusanrjt1kmdrhjd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1-ztHPzSq-SPsvrtR-WIVNuyZ06Oa7CE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "348081971538-j04pe9d9aa8voptcnusanrjt1kmdrhjd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
