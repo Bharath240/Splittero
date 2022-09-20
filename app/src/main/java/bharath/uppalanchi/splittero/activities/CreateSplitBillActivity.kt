@@ -1,7 +1,7 @@
 package bharath.uppalanchi.splittero.activities
 
 import adapters.SplitBillAdapter
-import adapters.SplitBillAdapterInterface
+import utils.GlobalInterface
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -23,7 +23,7 @@ import utils.Constants
 import utils.SwipeToDeleteCallback
 
 
-class CreateSplitBillActivity : AppCompatActivity(), View.OnClickListener, OnDialogCloseListener, SplitBillAdapterInterface {
+class CreateSplitBillActivity : AppCompatActivity(), View.OnClickListener, OnDialogCloseListener, GlobalInterface {
     private lateinit var binding: ActivityCreateSplitBillBinding
     private var splitBillBucketList = ArrayList<SplitBillBucket>()
 
@@ -128,6 +128,10 @@ class CreateSplitBillActivity : AppCompatActivity(), View.OnClickListener, OnDia
     }
 
     override fun displayEmptyLayout() {
+
+    }
+
+    override fun updateListForView(index: Int) {
 
     }
 

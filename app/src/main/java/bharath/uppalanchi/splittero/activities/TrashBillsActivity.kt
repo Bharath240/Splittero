@@ -1,7 +1,7 @@
 package bharath.uppalanchi.splittero.activities
 
 import adapters.SplitBillAdapter
-import adapters.SplitBillAdapterInterface
+import utils.GlobalInterface
 import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -12,7 +12,7 @@ import database.DBHandler
 import modals.SplitBillBucket
 import utils.Constants
 
-class TrashBillsActivity : AppCompatActivity(), SplitBillAdapterInterface {
+class TrashBillsActivity : AppCompatActivity(), GlobalInterface {
     private lateinit var binding: TrashBillsActivityBinding
     private var trashBillBucketList = ArrayList<SplitBillBucket>()
     private lateinit var db : DBHandler;
@@ -63,6 +63,10 @@ class TrashBillsActivity : AppCompatActivity(), SplitBillAdapterInterface {
     override fun displayEmptyLayout() {
         binding.scrollView.visibility = View.GONE
         binding.emptyLayout.visibility = View.VISIBLE
+    }
+
+    override fun updateListForView(index: Int) {
+
     }
 
 

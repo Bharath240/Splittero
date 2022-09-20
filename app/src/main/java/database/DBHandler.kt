@@ -53,7 +53,12 @@ SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
     override fun onUpgrade(db: SQLiteDatabase?, olderVersion: Int, newerVersion: Int) {
 
         if(olderVersion < newerVersion) {
-            createParticipantsTable(db)
+            val checkForParticipantsTable : Cursor? = db?.rawQuery("select DISTINCT tbl_name from sqlite_master where tbl_name = '"
+                    + PARTICIPANTS_TABLE + "'", null)
+            if(checkForParticipantsTable?.count == 0){
+                createParticipantsTable(db)
+            }
+
         }
 
     }
@@ -113,7 +118,6 @@ SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
         val cv = ContentValues()
         cv.put(TEMPORARY_DELETE,1)
 
-        //Inserting data into table
         val success = db.update(TABLE_NAME,cv, ID_COL +" ="+splitBill.splitBillId,null)
         db.close()
         return success
@@ -124,7 +128,7 @@ SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
         val cv = ContentValues()
         cv.put(TEMPORARY_DELETE,0)
 
-        //Inserting data into table
+
         val success = db.update(TABLE_NAME,cv, ID_COL +" ="+splitBill.splitBillId,null)
         db.close()
         return success
@@ -147,10 +151,7 @@ SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
     }
 
     private fun createParticipantsTable(db : SQLiteDatabase?){
-        val checkForParticipantsTable : Cursor? = db?.rawQuery("select DISTINCT tbl_name from sqlite_master where tbl_name = '"
-                + PARTICIPANTS_TABLE + "'", null)
-        if(checkForParticipantsTable?.count == 0){
-            val query2 = ("CREATE TABLE " + PARTICIPANTS_TABLE + " ("
+            val createParticipantsTableQuery = ("CREATE TABLE " + PARTICIPANTS_TABLE + " ("
                     + PARTICIPANT_ID + " INTEGER PRIMARY KEY, " +
                     PARTICIPANT_NAME + " TEXT," +
                     PARTICIPANT_DELETE + " INTEGER DEFAULT 0,"+
@@ -158,7 +159,22 @@ SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
                     " FOREIGN KEY ("+ ID_COL+") REFERENCES "+ TABLE_NAME+"("+ID_COL+")"+
 
                     ")")
-            db?.execSQL(query2)
-        }
+            db?.execSQL(createParticipantsTableQuery)
+
+    }
+
+    fun getParticipantsDetails(splitBucketId : Int?): Cursor?{
+        val db = this.readableDatabase
+        return db.rawQuery("SELECT * FROM " + PARTICIPANTS_TABLE + " WHERE "+ ID_COL+" = "+splitBucketId+" AND " +PARTICIPANT_DELETE + "=0" , null)
+    }
+
+    fun deleteParticipant(participantDetails : ParticipantDetails) : Int{
+        val db = this.writableDatabase
+        val cv = ContentValues()
+        cv.put(PARTICIPANT_DELETE,1)
+
+        val success = db.update(PARTICIPANTS_TABLE,cv, PARTICIPANT_ID +" ="+participantDetails.participantID,null)
+        db.close()
+        return success
     }
 }

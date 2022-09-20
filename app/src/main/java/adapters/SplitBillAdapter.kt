@@ -3,7 +3,6 @@ package adapters
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,8 +17,9 @@ import bharath.uppalanchi.splittero.activities.AddBillsActivity
 import database.DBHandler
 import modals.SplitBillBucket
 import utils.Constants
+import utils.GlobalInterface
 
-class SplitBillAdapter(private val context : Context, private var list : ArrayList<SplitBillBucket>, private val activityName : String, private val splitBillAdapterInterface : SplitBillAdapterInterface) : RecyclerView.Adapter<SplitBillAdapter.ViewHolder>(){
+class SplitBillAdapter(private val context : Context, private var list : ArrayList<SplitBillBucket>, private val activityName : String, private val globalInterface : GlobalInterface) : RecyclerView.Adapter<SplitBillAdapter.ViewHolder>(){
 
     private val avatarList = arrayOf<Int>(R.drawable.mountain, R.drawable.airplane,R.drawable.deck_chair,R.drawable.taxi,R.drawable.suitcase,R.drawable.hot_air_balloon)
 
@@ -110,7 +110,7 @@ class SplitBillAdapter(private val context : Context, private var list : ArrayLi
             Toast.makeText(context, "${list[position].splitBillName} is permanently deleted", Toast.LENGTH_SHORT).show()
             list.removeAt(position)
             if(list.size == 0){
-                splitBillAdapterInterface.displayEmptyLayout()
+                globalInterface.displayEmptyLayout()
             }
 
             notifyDataSetChanged()
@@ -124,13 +124,10 @@ class SplitBillAdapter(private val context : Context, private var list : ArrayLi
             Toast.makeText(context, "${list[position].splitBillName} is restored !!", Toast.LENGTH_SHORT).show()
             list.removeAt(position)
             if(list.size == 0){
-                splitBillAdapterInterface.displayEmptyLayout()
+                globalInterface.displayEmptyLayout()
             }
             notifyDataSetChanged()
         }
     }
 }
 
-interface SplitBillAdapterInterface{
-    fun displayEmptyLayout()
-}
