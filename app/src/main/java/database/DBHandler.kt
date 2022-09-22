@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import modals.ParticipantDetails
 import modals.SplitBillBucket
+import modals.TripBillsDetails
 
 class DBHandler(context: Context, factory: SQLiteDatabase.CursorFactory?) :
 SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
@@ -32,6 +33,15 @@ SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
         const val PARTICIPANT_DELETE = "bt_delete"
 
 
+        //--------------- TRIP BILLS TABLE --------------------------
+
+        const val TRIPS_BILL_TABLE = "tbl_trips_bills"
+        const val TRIP_BILL_ID = "trip_bill_id"
+        const val TRIP_BILL_DESCRIPTION = "trip_bill_description"
+        const val TRIP_BILL_AMOUNT = "bill_amount"
+        const val TRIP_BILL_DELETE = "trip_bill_delete"
+
+
     }
     override fun onCreate(db: SQLiteDatabase?) {
         val query = ("CREATE TABLE " + TABLE_NAME + " ("
@@ -53,12 +63,9 @@ SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
     override fun onUpgrade(db: SQLiteDatabase?, olderVersion: Int, newerVersion: Int) {
 
         if(olderVersion < newerVersion) {
-            val checkForParticipantsTable : Cursor? = db?.rawQuery("select DISTINCT tbl_name from sqlite_master where tbl_name = '"
-                    + PARTICIPANTS_TABLE + "'", null)
-            if(checkForParticipantsTable?.count == 0){
+            if(checkIfTheTableExistsInDatabaseOrNot(db, PARTICIPANTS_TABLE) == 0){
                 createParticipantsTable(db)
             }
-
         }
 
     }
@@ -93,7 +100,6 @@ SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
     fun getSplitBucketDetails(): Cursor? {
         val db = this.readableDatabase
         return db.rawQuery("SELECT * FROM " + TABLE_NAME+" WHERE "+ TEMPORARY_DELETE + " = 0" +" AND "+ PERMANENT_DELETE+ " =0", null)
-
     }
 
     fun getTrashSplitBucketDetails(): Cursor? {
@@ -161,6 +167,27 @@ SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
                     ")")
             db?.execSQL(createParticipantsTableQuery)
 
+
+        if(checkIfTheTableExistsInDatabaseOrNot(db, TRIPS_BILL_TABLE) == 0){
+            createTripBillsTable(db)
+        }
+
+    }
+
+    private fun createTripBillsTable(db : SQLiteDatabase?){
+        val createTripBillsTable = ("CREATE TABLE " + TRIPS_BILL_TABLE + " ("
+                + TRIP_BILL_ID + " INTEGER PRIMARY KEY, "
+                + TRIP_BILL_DESCRIPTION + " TEXT , "
+                + TRIP_BILL_AMOUNT + " INTEGER , " +
+                TRIP_BILL_DELETE + " INTEGER DEFAULT 0,"+
+                ID_COL+ " INTEGER,"+
+                PARTICIPANT_ID+ " INTEGER,"+
+                " FOREIGN KEY ("+ ID_COL+") REFERENCES "+ TABLE_NAME+"("+ID_COL+"), "+
+                " FOREIGN KEY ("+ PARTICIPANT_ID+") REFERENCES "+ PARTICIPANTS_TABLE+"("+PARTICIPANT_ID+")"+
+
+                ")")
+        db?.execSQL(createTripBillsTable)
+
     }
 
     fun getParticipantsDetails(splitBucketId : Int?): Cursor?{
@@ -177,4 +204,33 @@ SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
         db.close()
         return success
     }
+
+    private fun checkIfTheTableExistsInDatabaseOrNot(db: SQLiteDatabase?, nameOfTheTable : String): Int?{
+      val cursor =  db?.rawQuery("select DISTINCT tbl_name from sqlite_master where tbl_name = '"
+                + nameOfTheTable + "'", null)
+
+        return cursor?.count
+    }
+
+     fun addTripsBills(tripBillsDetails : TripBillsDetails) : Long{
+        val values = ContentValues()
+
+        values.put(TRIP_BILL_DESCRIPTION, tripBillsDetails.billDescription)
+        values.put(ID_COL,tripBillsDetails.splitBucketId)
+        values.put(PARTICIPANT_ID,tripBillsDetails.participantId)
+        values.put(TRIP_BILL_AMOUNT, tripBillsDetails.billAmount)
+
+        val db = this.writableDatabase
+        val success : Long = db.insert(TRIPS_BILL_TABLE, null, values)
+        db.close()
+        return  success
+    }
+
+    fun getTripBillDetails(splitBucketId : Int?): Cursor?{
+        val db = this.readableDatabase
+        return db.rawQuery("SELECT * FROM " + TRIPS_BILL_TABLE + " WHERE "+ ID_COL+" = "+splitBucketId+" AND " + TRIP_BILL_DELETE + "=0" , null)
+    }
+
+
+
 }

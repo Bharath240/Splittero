@@ -140,6 +140,7 @@ class AddSplitBillDialog(context: Context,private var listener: OnDialogCloseLis
 
         }
 
+        splitBillBucketNames.clear()
         for (item in splitBillBucketList) {
             splitBillBucketNames.add(item.splitBillName)
         }

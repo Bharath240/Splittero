@@ -37,13 +37,12 @@ class AddParticipantActivity : AppCompatActivity(), View.OnClickListener,GlobalI
                 val view = binding.root
                 setContentView(view)
                 db = DBHandler(this@AddParticipantActivity, null)
-                setupRecyclerViewForSplitBillBuckets(participantsList)
+                setupRecyclerViewForAddParticipant(participantsList)
 
                 if(intent.hasExtra(Constants.SPLIT_BILL_BUCKET_DETAILS)){
                     splitBillBucket = intent.getParcelableExtra(Constants.SPLIT_BILL_BUCKET_DETAILS)
                     getParticipantDetails()
                     setOnClickListeners()
-
                 }
     }
 
@@ -70,8 +69,6 @@ class AddParticipantActivity : AppCompatActivity(), View.OnClickListener,GlobalI
                 else{
                     Toast.makeText(applicationContext,"Something went wrong !!", Toast.LENGTH_SHORT).show()
                 }
-
-
             }
 
         }
@@ -97,7 +94,7 @@ class AddParticipantActivity : AppCompatActivity(), View.OnClickListener,GlobalI
         }
 
     }
-    private fun textChangeListener(createSplitBillInput : TextInputLayout) : TextWatcher {
+    private fun textChangeListener(participantInput : TextInputLayout) : TextWatcher {
         val textWatcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
 
@@ -106,11 +103,11 @@ class AddParticipantActivity : AppCompatActivity(), View.OnClickListener,GlobalI
 
             }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if(createSplitBillInput.error !=null){
+                if(participantInput.error !=null){
                    binding.participantInputLayout.error = "Participant Name should be at least 3 letters"
                 }
                 if(s?.length!! > 2){
-                    createSplitBillInput.error = null
+                    participantInput.error = null
                 }
             }
         }
@@ -138,7 +135,7 @@ class AddParticipantActivity : AppCompatActivity(), View.OnClickListener,GlobalI
             binding.participantsRecyclerView.visibility = View.VISIBLE
             binding.emptyLayout.visibility = View.GONE
             adapter.notifyDataSetChanged()
-
+            participantNames.clear()
             for( participant in participantsList){
                 participantNames.add(participant.participantName)
             }
@@ -149,7 +146,7 @@ class AddParticipantActivity : AppCompatActivity(), View.OnClickListener,GlobalI
         }
     }
 
-    private fun setupRecyclerViewForSplitBillBuckets(participantsList : ArrayList<ParticipantDetails>){
+    private fun setupRecyclerViewForAddParticipant(participantsList : ArrayList<ParticipantDetails>){
         binding.participantsRecyclerView.layoutManager = LinearLayoutManager(this)
         adapter = ParticipantsListAdapter(this@AddParticipantActivity,participantsList,this@AddParticipantActivity)
         binding.participantsRecyclerView.adapter = adapter

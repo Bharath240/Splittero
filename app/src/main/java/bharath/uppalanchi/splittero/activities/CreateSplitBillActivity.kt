@@ -95,14 +95,8 @@ class CreateSplitBillActivity : AppCompatActivity(), View.OnClickListener, OnDia
                 areYouSureWantToDeleteSplitBill(viewHolder,splitBillBucketList)
             }
         }
-
-
             val editItemTouchHelper = ItemTouchHelper(editSwiperHandler)
-
             editItemTouchHelper.attachToRecyclerView(binding.splitBillRecyclerView)
-
-
-
     }
 
    private fun areYouSureWantToDeleteSplitBill(viewHolder: RecyclerView.ViewHolder,splitBillBucketList : ArrayList<SplitBillBucket>){
