@@ -21,12 +21,16 @@
         <entry key="..\:/Users/bhara/OneDrive/Desktop/Splittero/app/src/main/res/drawable/border_border_radius.xml" value="0.1045" />
         <entry key="..\:/Users/bhara/OneDrive/Desktop/Splittero/app/src/main/res/drawable/rectangle_border.xml" value="0.1045" />
         <entry key="..\:/Users/bhara/OneDrive/Desktop/Splittero/app/src/main/res/drawable/rounded_background.xml" value="0.1045" />
-        <entry key="..\:/Users/bhara/OneDrive/Desktop/Splittero/app/src/main/res/layout/activity_add_bills.xml" value="0.335" />
+        <entry key="..\:/Users/bhara/OneDrive/Desktop/Splittero/app/src/main/res/layout/activity_add_bills.xml" value="0.375" />
         <entry key="..\:/Users/bhara/OneDrive/Desktop/Splittero/app/src/main/res/layout/activity_add_participant.xml" value="0.3541666666666667" />
         <entry key="..\:/Users/bhara/OneDrive/Desktop/Splittero/app/src/main/res/layout/activity_add_split_bill_dialog.xml" value="0.2296195652173913" />
+        <entry key="..\:/Users/bhara/OneDrive/Desktop/Splittero/app/src/main/res/layout/activity_bill_payout.xml" value="0.335" />
         <entry key="..\:/Users/bhara/OneDrive/Desktop/Splittero/app/src/main/res/layout/activity_create_split_bill.xml" value="0.1" />
+        <entry key="..\:/Users/bhara/OneDrive/Desktop/Splittero/app/src/main/res/layout/bill_details_card.xml" value="0.375" />
         <entry key="..\:/Users/bhara/OneDrive/Desktop/Splittero/app/src/main/res/layout/participant_card.xml" value="0.20052083333333334" />
         <entry key="..\:/Users/bhara/OneDrive/Desktop/Splittero/app/src/main/res/layout/participant_names.xml" value="0.2128623188405797" />
+        <entry key="..\:/Users/bhara/OneDrive/Desktop/Splittero/app/src/main/res/layout/payout_card.xml" value="0.335" />
+        <entry key="..\:/Users/bhara/OneDrive/Desktop/Splittero/app/src/main/res/layout/split_bill_card.xml" value="0.1" />
       </map>
     </option>
   </component>

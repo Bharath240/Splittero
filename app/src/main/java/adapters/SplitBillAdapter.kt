@@ -87,7 +87,7 @@ class SplitBillAdapter(private val context : Context, private var list : ArrayLi
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun areYouSureWantToPermanentlyDeleteOrRestoreSplitBill(splitBillBucket: SplitBillBucket, position: Int){
+    private fun areYouSureWantToPermanentlyDeleteOrRestoreSplitBill(splitBillBucket: SplitBillBucket, position: Int) {
         val builder = AlertDialog.Builder(context)
         builder.setTitle("Restore/Delete")
         builder.setMessage("Do you want to restore or permanently delete ${list[position].splitBillName} ?")

@@ -73,5 +73,11 @@ class ParticipantsListAdapter(private val context : Context, private var list : 
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+     fun updateList(updatedList : ArrayList<ParticipantDetails>){
+        list = updatedList
+        notifyDataSetChanged()
+    }
+
 
 }

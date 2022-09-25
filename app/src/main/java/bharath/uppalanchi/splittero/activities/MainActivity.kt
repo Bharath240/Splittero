@@ -22,6 +22,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         binding.createSplitBill.setOnClickListener(this)
         binding.trashSplitBill.setOnClickListener(this)
     }
+
     override fun onClick(view: View?) {
         when(view?.id){
             R.id.create_split_bill -> {

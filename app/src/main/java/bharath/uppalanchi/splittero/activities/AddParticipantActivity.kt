@@ -29,9 +29,9 @@ class AddParticipantActivity : AppCompatActivity(), View.OnClickListener,GlobalI
     private  var splitBillBucket: SplitBillBucket? = null
     private  var participantsList = ArrayList<ParticipantDetails>()
     private lateinit var adapter  : ParticipantsListAdapter
-    private var participantNames = java.util.ArrayList<String?>()
+    private var participantNames = ArrayList<String?>()
 
-            override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
                 binding = ActivityAddParticipantBinding.inflate(layoutInflater)
                 val view = binding.root
@@ -94,6 +94,7 @@ class AddParticipantActivity : AppCompatActivity(), View.OnClickListener,GlobalI
         }
 
     }
+
     private fun textChangeListener(participantInput : TextInputLayout) : TextWatcher {
         val textWatcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
@@ -124,17 +125,16 @@ class AddParticipantActivity : AppCompatActivity(), View.OnClickListener,GlobalI
        }
     }
 
-    @SuppressLint("Range", "NotifyDataSetChanged")
+
+    @SuppressLint("NotifyDataSetChanged")
     private fun getParticipantDetails(){
-        participantsList.clear()
-       val cursor = db.getParticipantsDetails(splitBillBucket?.splitBillId)
-        while (cursor!!.moveToNext()){
-            participantsList.add(ParticipantDetails(cursor.getInt(cursor.getColumnIndex(DBHandler.PARTICIPANT_ID)),cursor.getString(cursor.getColumnIndex(DBHandler.PARTICIPANT_NAME)),cursor.getInt(cursor.getColumnIndex(DBHandler.ID_COL)),cursor.getInt(cursor.getColumnIndex(DBHandler.PARTICIPANT_DELETE))))
-        }
+        participantsList = db.getParticipantsDetails(splitBillBucket?.splitBillId)
+
         if(participantsList.size > 0){
             binding.participantsRecyclerView.visibility = View.VISIBLE
             binding.emptyLayout.visibility = View.GONE
-            adapter.notifyDataSetChanged()
+            adapter.updateList(participantsList)
+
             participantNames.clear()
             for( participant in participantsList){
                 participantNames.add(participant.participantName)

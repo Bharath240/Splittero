@@ -16,6 +16,7 @@ class TrashBillsActivity : AppCompatActivity(), GlobalInterface {
     private lateinit var binding: TrashBillsActivityBinding
     private var trashBillBucketList = ArrayList<SplitBillBucket>()
     private lateinit var db : DBHandler;
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = TrashBillsActivityBinding.inflate(layoutInflater)

@@ -11,20 +11,22 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Splittero">
         <activity
+            android:name=".activities.BillPayoutActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.AddParticipantActivity"
-            android:screenOrientation="portrait"
             android:exported="false"
+            android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
-
         <activity
             android:name=".activities.AddBillsActivity"
-            android:screenOrientation="portrait"
             android:exported="false"
+            android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         <activity
             android:name=".activities.TrashBillsActivity"
-            android:screenOrientation="portrait"
             android:exported="false"
+            android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         <activity
             android:name="dialogs.AddSplitBillDialog"

@@ -1,5 +1,6 @@
 package database
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
@@ -7,15 +8,19 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import modals.ParticipantDetails
+import modals.PayoutDetails
 import modals.SplitBillBucket
 import modals.TripBillsDetails
 
-class DBHandler(context: Context, factory: SQLiteDatabase.CursorFactory?) :
+open class DBHandler(context: Context, factory: SQLiteDatabase.CursorFactory?) :
 SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
 
     companion object {
         private const val DATABASE_NAME = "SPLITTERO"
         private const val DATABASE_VERSION = 10
+
+        //--------------- HELPER VARIABLES ---------------------------
+        private const val TOTAL_PAID = "total_paid"
 
         //--------------- SPLIT BILLS BUCKET TABLE -------------------
         const val TABLE_NAME = "tbl_bills_bucket"
@@ -34,7 +39,6 @@ SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
 
 
         //--------------- TRIP BILLS TABLE --------------------------
-
         const val TRIPS_BILL_TABLE = "tbl_trips_bills"
         const val TRIP_BILL_ID = "trip_bill_id"
         const val TRIP_BILL_DESCRIPTION = "trip_bill_description"
@@ -71,9 +75,7 @@ SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
     }
 
     fun insertSplitBill(splitBillName : String, imageIndex : Int,splitBillCreatedDate : String ) : Long{
-
         val values = ContentValues()
-
         values.put(SPLIT_BILL_NAME_COL, splitBillName)
         values.put(IMAGE_INDEX, imageIndex)
         values.put(CREATED_DATE, splitBillCreatedDate)
@@ -190,9 +192,20 @@ SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
 
     }
 
-    fun getParticipantsDetails(splitBucketId : Int?): Cursor?{
+    @SuppressLint("Range")
+    fun getParticipantsDetails(splitBucketId : Int?): ArrayList<ParticipantDetails>{
+        val participantsList = ArrayList<ParticipantDetails>()
         val db = this.readableDatabase
-        return db.rawQuery("SELECT * FROM " + PARTICIPANTS_TABLE + " WHERE "+ ID_COL+" = "+splitBucketId+" AND " +PARTICIPANT_DELETE + "=0" , null)
+        val cursor =  db.rawQuery("SELECT * FROM " + PARTICIPANTS_TABLE + " WHERE "+ ID_COL+" = "+splitBucketId+" AND " +PARTICIPANT_DELETE + "=0" , null)
+
+        while (cursor!!.moveToNext()) {
+            participantsList.add(
+                ParticipantDetails(cursor.getInt(cursor.getColumnIndex(PARTICIPANT_ID)),cursor.getString(cursor.getColumnIndex(
+                    PARTICIPANT_NAME)),cursor.getInt(cursor.getColumnIndex(ID_COL)),cursor.getInt(cursor.getColumnIndex(
+                    PARTICIPANT_DELETE)))
+            )
+        }
+        return  participantsList
     }
 
     fun deleteParticipant(participantDetails : ParticipantDetails) : Int{
@@ -226,9 +239,48 @@ SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
         return  success
     }
 
-    fun getTripBillDetails(splitBucketId : Int?): Cursor?{
+    @SuppressLint("Range")
+    fun getTripBillDetails(splitBucketId : Int?): ArrayList<TripBillsDetails>{
+        val tripBillsDetails = ArrayList<TripBillsDetails>()
         val db = this.readableDatabase
-        return db.rawQuery("SELECT * FROM " + TRIPS_BILL_TABLE + " WHERE "+ ID_COL+" = "+splitBucketId+" AND " + TRIP_BILL_DELETE + "=0" , null)
+        val cursor = db.rawQuery("SELECT tbl.*, tbl_pt."+ PARTICIPANT_NAME+" FROM " + TRIPS_BILL_TABLE + " tbl JOIN "+ PARTICIPANTS_TABLE+ " tbl_pt ON tbl_pt."+PARTICIPANT_ID+"="+"tbl."+ PARTICIPANT_ID+" WHERE tbl."+ ID_COL+" = "+splitBucketId+" AND " + TRIP_BILL_DELETE + "=0" , null)
+        while (cursor!!.moveToNext()){
+            tripBillsDetails.add(TripBillsDetails(cursor.getInt(cursor.getColumnIndex(TRIP_BILL_ID)),cursor.getString(cursor.getColumnIndex(TRIP_BILL_DESCRIPTION)),cursor.getInt(cursor.getColumnIndex(TRIP_BILL_AMOUNT)),cursor.getInt(cursor.getColumnIndex(PARTICIPANT_ID)),cursor.getString(cursor.getColumnIndex(
+                PARTICIPANT_NAME)),cursor.getInt(cursor.getColumnIndex(ID_COL)),cursor.getInt(cursor.getColumnIndex(TRIP_BILL_DELETE))))
+        }
+        return  tripBillsDetails
+    }
+
+    fun deleteTripBill(tripBillsDetails : TripBillsDetails) : Int{
+        val db = this.writableDatabase
+        val cv = ContentValues()
+        cv.put(TRIP_BILL_DELETE,1)
+
+        val success = db.update(TRIPS_BILL_TABLE,cv, TRIP_BILL_ID +" ="+tripBillsDetails.tripBillId,null)
+        db.close()
+        return success
+    }
+
+    @SuppressLint("Range")
+    fun getPayoutDetails(splitBucketId : Int?): ArrayList<PayoutDetails>{
+        val payoutDetails = ArrayList<PayoutDetails>()
+        val db = this.readableDatabase
+        val query =
+            "SELECT tbt.$PARTICIPANT_ID,pt.$PARTICIPANT_NAME, SUM(tbt.$TRIP_BILL_AMOUNT) as $TOTAL_PAID " +
+                    "FROM $TRIPS_BILL_TABLE tbt " +
+                    "JOIN $PARTICIPANTS_TABLE pt ON pt.$PARTICIPANT_ID = tbt.$PARTICIPANT_ID" +
+                    " WHERE tbt.$ID_COL = $splitBucketId AND tbt.$TRIP_BILL_DELETE=0 " +
+                    "GROUP BY tbt.$PARTICIPANT_ID"
+        Log.d("getPayoutDetails", query)
+        val cursor =  db.rawQuery(query  , null)
+
+        while (cursor.moveToNext()){
+            payoutDetails.add(PayoutDetails(cursor.getInt(cursor.getColumnIndex(PARTICIPANT_ID)), cursor.getString(cursor.getColumnIndex(
+                PARTICIPANT_NAME)), cursor.getInt(cursor.getColumnIndex(TOTAL_PAID)),null))
+        }
+
+        return payoutDetails
+
     }
 
 
